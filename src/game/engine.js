@@ -51,11 +51,13 @@ export function initGame(canvas, {onScoreChange, onGameOver}) {
     function handleKeyDown(e) {
         if(!isRunning) return;
 
+        let targetDirection = null;
+
         switch(e.key) {
-            case 'ArrowUp': case 'w': case 'W': if(direction.y === 0) nextDirection = {x: 0, y: -1}; break;
-            case 'ArrowDown': case 's': case 'S': if(direction.y === 0) nextDirection = {x: 0, y: 1}; break;
-            case 'ArrowLeft': case 'a': case 'A': if(direction.x === 0) nextDirection = {x: -1, y: 0}; break;
-            case 'ArrowRight': case 'd': case 'D': if(direction.x === 0) nextDirection = {x: 1, y: 0}; break;
+            case 'ArrowUp': case 'w': case 'W': if(direction.y === 0) targetDirection = {x: 0, y: -1}; break;
+            case 'ArrowDown': case 's': case 'S': if(direction.y === 0) targetDirection = {x: 0, y: 1}; break;
+            case 'ArrowLeft': case 'a': case 'A': if(direction.x === 0) targetDirection = {x: -1, y: 0}; break;
+            case 'ArrowRight': case 'd': case 'D': if(direction.x === 0) targetDirection = {x: 1, y: 0}; break;
             default: return;
         }
 
