@@ -54,6 +54,13 @@ export default function GameContainer() {
                         <MainMenu onStart={handleStartGame} />
                     </div>
                 )}
+
+                {/* When game is over, show the modal and update high score if needed */}
+                {gameState === 'GAME OVER' && (
+                    <div className="absolute inset-0 bg-black/75 backdrop-blur-sm z-20 flex items-center justify-center animate-fade-in">
+                        <GameOverModal score={score} onRestart={handleStartGame} />
+                    </div>
+                )}
             </div>
 
             <p className="mt-4 text-xs text-slate-500">Use WASD or Arrow Keys to move the snek.</p>
