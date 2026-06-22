@@ -1,17 +1,19 @@
 import React from "react";
 
 export default function GameHUD({ score, highScore }) {
-    return (
-        <div className="flex justify-between items-center w-full px-2 mix-blend-difference">
-            {/* mix-blend-difference ensures text is readable over any background */}
-            <div className="flex items-center gap-2">
-                <span className="text-xs opacity-60">SCORE:</span>
-                <span className="text-lg font-bold tracking-wide text-cyan-400">{score}</span>
-            </div>
-            <div className="flex items-center gap-2">
-                <span className="text-xs opacity-60">HI-SCORE:</span>
-                <span className="text-lg font-bold tracking-wide text-cyan-400">{highScore}</span>
-            </div>
-        </div>
-    );
+  return (
+    <div className="flex justify-between items-center w-full max-w-[600px] px-2 mb-3 font-mono select-none">
+      {/* Current Score */}
+      <div className="flex items-center gap-2">
+        <span className="text-xs uppercase tracking-wider text-slate-500">SCORE:</span>
+        <span className="text-xl font-bold tracking-wide text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.4)]">{score}</span>
+      </div>
+
+      {/* High Score */}
+      <div className="flex items-center gap-2">
+        <span className="text-xs uppercase tracking-wider text-slate-500">HI-SCORE:</span>
+        <span className="text-xl font-bold tracking-wide text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.4)]">{highScore}</span>
+      </div>
+    </div>
+  );
 }

@@ -49,18 +49,15 @@ export default function GameContainer() {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-slate-950 font-mono text-white p-4">
+        <div className="flex flex-col items-center justify-center min-h-screen bg-slate-950 font-mono text-white p-4 select-none touch-none">
+            
+            {/* Score & High Score */}
+            <GameHUD score={score} highScore={highScore} />
+
             {/* Forces relative positioning and aspect ratio */}
             <div className="relative w-full max-w-[600px] aspect-square rounded-2xl border-4 border-cyan-500/30 overflow-hidden shadow-[0_0_50px_rgba(6,182,212,0.15)]">
                 {/* Canvas fills the container and is where the game is rendered */}
                 <canvas ref={canvasRef} className="absolute inset-0 w-full h-full bg-slate-900" />
-
-                {/* Overlay UI elements */}
-                {gameState === 'PLAYING' && (
-                    <div className="absolute inset-x-0 top-0 p-4 z-10 pointer-events-none">
-                        <GameHUD score={score} highScore={highScore} />
-                    </div>
-                )}
 
                 {/* Main menu and game over modal are centered overlays */}
                 {gameState === 'MENU' && (
@@ -77,7 +74,10 @@ export default function GameContainer() {
                 )}
             </div>
 
-            <p className="mt-4 text-xs text-slate-500">Use WASD or Arrow Keys to move the snek.</p>
+            {/* Responsive Footer Controls Prompt */}
+            <p className="mt-4 text-xs text-slate-500 hidden md:block">Use WASD or Arrow Keys to move the snek.</p>
+            <p className="mt-4 text-xs text-slate-500 md:hidden">Swipe anywhere on the screen to control the snek.</p>
+            
         </div>
     );
 }
