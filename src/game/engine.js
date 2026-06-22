@@ -13,6 +13,9 @@ export function initGame(canvas, {onScoreChange, onGameOver}) {
     let score = 0;
     let isRunning = false;
 
+    // For touchscreen / Mobile implementation
+    let touchStartPos = {x: 0, y: 0};
+
     // Force canvas to be a square based on the smaller dimension of the window
     function resize() {
         const rect = canvas.getBoundingClientRect();
@@ -73,7 +76,48 @@ export function initGame(canvas, {onScoreChange, onGameOver}) {
         }
     }
 
+    function handleTouchStart(e) {
+        touchStartPos.x = e.touches[0].clientX;
+        touchStartPos.y = e.touches[0].clientY;
+    }
+
+    function handleTouchEnd(e) {
+        if(!isRunning) return;
+
+        const touchEndX = e.changedTouches[0].clientX;
+        const touchEndY = e.changedTouches[0].clientY;
+
+        const dx = touchEndX - touchStartPos.x;
+        const dy = touchEndY - touchStartPos.y;
+
+        // Min swipe distance threshold in pixels to ignore accidental micro-taps
+        const threshold = 30;
+
+        if(Math.abs(dx) < threshold && Math.abs(dy) < threshold) return;
+
+        let targetDirection = null;
+
+        // Determine swipe axis (Horizontal vs. Vertical)
+        if(Math.abs(dx) > Math.abs(dy)) {
+            // Horizontal
+            targetDirection = dx > 0 ? {x: 1, y: 0} : {x: -1, y: 0};
+        } else {
+            // Vertical
+            targetDirection = dy > 0 ? {x: 0, y: 1} : {x: 0, y: -1};
+        }
+
+        // Queue up direction using same anti-reversal safety logic
+        const lastQueuedDirection = inputQueue.length > 0 ? inputQueue[inputQueue.length - 1] : direction;
+        if(targetDirection && (targetDirection.x !== -lastQueuedDirection.x || targetDirection.y !== -lastQueuedDirection)) {
+            if(inputQueue.length < 2) {
+                inputQueue.push(targetDirection);
+            }
+        }
+    }
+
     window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('touchstart', handleTouchStart, {passive: true});
+    window.addEventListener('touchend', handleTouchEnd, {passive: true});
 
     // Core mechanics update logic
     function update() {
@@ -185,6 +229,8 @@ export function initGame(canvas, {onScoreChange, onGameOver}) {
             isRunning = false;
             cancelAnimationFrame(loopId);
             window.removeEventListener('keydown', handleKeyDown);
+            window.addEventListener('touchstart', handleTouchStart, {passive: true});
+            window.addEventListener('touchend', handleTouchEnd, {passive: true});
         }
     }
 }
