@@ -16,6 +16,20 @@ export function initGame(canvas, {onScoreChange, onGameOver}) {
     // For touchscreen / Mobile implementation
     let touchStartPos = {x: 0, y: 0};
 
+    // Audio blocks
+    const eatSound = new Audio(`${import.meta.env.BASE_URL}sounds/eat.wav`);
+    const dieSound = new Audio(`${import.meta.env.BASE_URL}sounds/die.wav`);
+
+    eatSound.volume = 0.5;
+    dieSound.volume = 0.7;
+    
+    // Safety helper to play sounds without crashing IF browser blocks autoplay
+    const playSFX = (sound) => {
+        // Reset sound to start if already playing
+        sound.currentTime = 0;
+        sound.play().catch(err => console.log("Audio blocked until user interaction:", err));
+    }
+
     // Force canvas to be a square based on the smaller dimension of the window
     function resize() {
         const rect = canvas.getBoundingClientRect();
@@ -143,12 +157,14 @@ export function initGame(canvas, {onScoreChange, onGameOver}) {
 
         // (1) Collision check: Hits wall
         if(head.x < 0 || head.x >= GRID_SIZE || head.y < 0 || head.y >= GRID_SIZE) {
+            playSFX(dieSound);
             gameOver();
             return;
         }
 
         // (2) Collision check: Hits body
         if(snake.some(segment => segment.x === head.x && segment.y === head.y)) {
+            playSFX(dieSound);
             gameOver();
             return;
         }
@@ -158,6 +174,7 @@ export function initGame(canvas, {onScoreChange, onGameOver}) {
 
         // (3) Mechanic check: Food consumption
         if(head.x === food.x && head.y === food.y) {
+            playSFX(eatSound);
             score += 10;
             onScoreChange(score);
             spawnFood();
