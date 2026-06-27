@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: 22
 
-      - name: Install Playwright Automation Core
+      - name: Install Playwright and Browser Binaries
         run: |
           npm install playwright
           npx playwright install chromium
@@ -27,19 +27,24 @@ jobs:
       - name: Generate Headless Browser Capture Script
         run: |
           cat << 'EOF' > capture.cjs
-          const { chromium } = require('playwright-core');
+          const { chromium } = require('playwright');
           (async () => {
+            // Launch headless Chromium engine
             const browser = await chromium.launch();
             const page = await browser.newPage();
             
+            // Set clean preview card aspect ratio dimensions
             await page.setViewportSize({ width: 1000, height: 1300 });
             
+            // TARGET URL: Explicitly capturing the live snek game canvas
             await page.goto('https://christianbihasa.github.io/snek', {
               waitUntil: 'networkidle'
             });
             
+            // Explicit timeout delay to let canvas engines or react states render completely
             await new Promise(resolve => setTimeout(resolve, 4000));
             
+            // Capture visual layer and write to file system
             await page.screenshot({ path: 'preview.png' });
             await browser.close();
           })();
@@ -58,5 +63,6 @@ jobs:
 
           git add preview.png
 
+          # [skip ci] is critical here to stop this commit from triggering a re-deployment loop
           git commit -m "chore: automated viewport sync preview image [skip ci]" || exit 0
           git push
